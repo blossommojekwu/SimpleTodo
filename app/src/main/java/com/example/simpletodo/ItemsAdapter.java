@@ -13,16 +13,22 @@ import java.util.List;
 //adapter: responsible for displaying data from the model into a row in the recycle view
 public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
 
+    public interface OnClickListener{
+        void onItemClicked(int position);
+    }
+
     public interface OnLongClickListener {
         void onItemLongClicked(int position);
     }
 
     List<String> items;
     OnLongClickListener longClickListener;
+    OnClickListener clickListener;
 
-    public ItemsAdapter(List<String> items, OnLongClickListener longClickListener) {
+    public ItemsAdapter(List<String> items, OnLongClickListener longClickListener, OnClickListener clickListener) {
         this.items = items;
         this.longClickListener = longClickListener;
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -60,8 +66,15 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
             tvItem = itemView.findViewById(android.R.id.text1);
         }
         //update the view inside the view holder with this data
+        //want to update item like remove --> need position to edit text on click
         public void bind(String item) {
             tvItem.setText(item);
+            tvItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    clickListener.onItemClicked(getAdapterPosition());
+                }
+            });
             tvItem.setOnLongClickListener(new View.OnLongClickListener(){
 
                 @Override
